@@ -34,11 +34,39 @@ app.get("/apprenants", async (req, res) => {
   }
 });
 
+//Get all cohortes
+app.get("/cohorte", async (req, res) => {
+  try {
+    const cohortes = await cohorte.findMany({
+      include: {
+        apprenants: {
+          select: {
+            nom: true,
+          },
+        },
+      },
+    });
+    res.send(cohortes);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+//Get all session
+app.get("/session", async (req, res) => {
+  try {
+    const sessions = await session.findMany();
+    res.send(sessions);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 //Post new ordi
 app.post("/ordinateurs", async (req, res) => {
   try {
     const newOrdi = {
-      tag: "ordi 001",
+      tag: "ordi 003",
       modele: "i mac",
       fabriquant: "apple",
     };
@@ -52,8 +80,6 @@ app.post("/ordinateurs", async (req, res) => {
 //Post new student
 app.post("/apprenants", async (req, res) => {
   try {
-    //const apprenants = await apprenant.findMany();
-    //res.status(201).send(apprenants);
     const newStudent = {
       prenom: "Prenom",
       nom: "nom",
@@ -67,6 +93,36 @@ app.post("/apprenants", async (req, res) => {
     };
     const addedStudent = await apprenant.create({ data: newStudent });
     return res.status(201).send(addedStudent);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+//Post new cohorte
+app.post("/cohorte", async (req, res) => {
+  try {
+    const newCohorte = {
+      code: 2,
+      sessionId: 1,
+      description: "Description du 1",
+    };
+    const addedCohorte = await cohorte.create({ data: newCohorte });
+    return res.status(201).send(addedCohorte);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+//Post new session
+app.post("/session", async (req, res) => {
+  try {
+    const newSession = {
+      annee: 2023,
+      type: "Longue",
+      ville: "Lubumbashi",
+    };
+    const addedSession = await session.create({ data: newSession });
+    return res.status(201).send(addedSession);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
